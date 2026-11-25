@@ -50,11 +50,12 @@ from pathlib import Path
 
 # The winning pitch, chosen from 10 candidates scored against the
 # judge brief (on-brief first, then funny, clever, original, tight).
-ENTRY = (
-    "The Chair of Regret is an office chair that sinks one centimetre "
-    "every time you say 'just five more minutes', until you are sitting "
-    "on the floor at eye level with your unfinished work."
-)
+# Split into named parts so each beat of the sentence is auditable.
+INVENTION = "The Chair of Regret is an office chair"
+MECHANISM = "that sinks one centimetre every time you say 'just five more minutes'"
+PUNCHLINE = "until you are sitting on the floor at eye level with your unfinished work."
+
+ENTRY = f"{INVENTION} {MECHANISM}, {PUNCHLINE}"
 
 # The gate: /output/entry.txt must be UTF-8 text of 1 to 220 characters.
 MAX_CHARS = 220
@@ -62,9 +63,11 @@ MAX_CHARS = 220
 
 def main() -> None:
     """Write the entry sentence to /output/entry.txt, exactly as-is."""
-    text = ENTRY.strip()
+    text = " ".join(ENTRY.split())
     if "\n" in text:
         raise ValueError("entry must be a single sentence on one line")
+    if not text.endswith("."):
+        raise ValueError("entry must end with a full stop")
     if not 1 <= len(text) <= MAX_CHARS:
         raise ValueError(
             f"entry must be 1-{MAX_CHARS} characters, got {len(text)}"
